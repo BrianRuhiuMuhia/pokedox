@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 )
@@ -13,31 +14,38 @@ type Command struct {
 	description string
 	callback    func() error
 }
+type Config struct {
+}
 
 func commandExit() error {
 	os.Exit(0)
 	return nil
 }
 func commandHelp() error {
-	fmt.Println("help commands helps with the commands in the pokedox\n")
+	fmt.Println("help commands helps with the commands in the pokedox")
 
 	return nil
 }
 func commandPokemon() error {
-	resp, err := http.Get("https://pokeapi.co/api/v2/location-area/")
+	req, err := http.NewRequest("GET", "https://pokeapi.co/api/v2/location-area/", nil)
 	if err != nil {
-		fmt.Println("There was an error try again")
-		os.Exit(0)
+		log.Fatal("there was an error fetching data")
+		return nil
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatal("there was as error fetching data")
 	}
 	defer resp.Body.Close()
-	data, parsing_err := io.ReadAll(resp.Body)
-	if parsing_err != nil {
-		fmt.Println("There was an error try again")
-		os.Exit(0)
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal("there was an error fetching data")
+		return nil
 	}
-	dataStr := string(data)
-	fmt.Println(dataStr)
-
+	str := string(data)
+	fmt.Println(str)
 	return nil
 }
 func main() {
@@ -56,6 +64,11 @@ func main() {
 			name:        "map",
 			description: "displays the names of 20 location areas in the Pokemon world",
 			callback:    commandPokemon,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "displays the names of the previous 20 location areas in the Pokemon world",
+			callback:    nil,
 		},
 	}
 	fmt.Println("Welcome To Pokedox\nUsage:\nhelp: Displays a help message\nexit: Exit the Pokedex\nmap:displays the map of pokemon")
