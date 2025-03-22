@@ -5,12 +5,15 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/fatih/color"
 )
 
 func getInput() {
 	fmt.Print("\033[H\033[2J")
+	color.New(color.BgRed).Println("Welcome To Pokedox\ncommands for getting around the pokemon map")
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("Welcome To Pokedox\ncommands for getting around the pokemon map\n ")
+	fmt.Println()
 	for _, value := range userCommands {
 		fmt.Println(value.name)
 	}

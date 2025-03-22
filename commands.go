@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"github.com/fatih/color"
 )
 
 var userCommands = map[string]Command{
@@ -14,25 +16,25 @@ var userCommands = map[string]Command{
 }
 
 func helpCmd() {
-	fmt.Printf("The help command shows all the commands and how to use them\nThe map command fetches data from the pokemon server\nThe exit command exits the program ")
+	color.Blue("The help command shows all the commands and how to use them\nThe map command fetches data from the pokemon server\nThe exit command exits the program ")
 }
 func mapWorld() {
 	url := "https://pokeapi.co/api/v2/location"
 	data, err := fetchData(url)
 	if err != nil {
-		fmt.Printf("Something Went Wrong: %v\n", err)
+		color.Red("Something Went Wrong: %v\n", err)
 		return
 	}
 	if value, exists := my_cache.cache[url]; exists {
 		fmt.Println("getting data from cache")
 		for _, obj := range value {
-			fmt.Printf("%s\n", obj.Name)
+			color.Green("%s\n", obj.Name)
 		}
 		return
 	} else {
 		fmt.Println("getting data from server storing in cache")
 		for _, value := range data.Results {
-			fmt.Println(value.Name)
+			color.Green(value.Name)
 		}
 		resultChan := make(chan CacheResult)
 		my_cache.addData(url, data.Results, resultChan)
